@@ -1,0 +1,59 @@
+name: Build
+
+on:
+  schedule:
+    - cron: '0 * * * *'  # Runs every hour at the start of the hour (UTC)
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    # Only run on PRs if the source branch is from a different repository
+    if: ${{ github.event_name != 'pull_request' || github.repository != github.event.pull_request.head.repo.full_name }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Git Repository
+        uses: actions/checkout@v3
+      
+      - name: Clone Repository
+        run: git clone --branch main https://github.com/Auxilor/EcoEnchants.git
+      
+      - name: Validate Gradle Wrapper
+        uses: gradle/wrapper-validation-action@v3
+      
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+      
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+      
+      - name: Configure Git User Details
+      
+        run: |
+          cd EcoEnchants
+          git config --global user.email "actions@github.com" && git config --global user.name "Github Actions"
+      
+      - name: Build
+        run: |
+          cd EcoEnchants
+          chmod +x ./gradlew
+          ./gradlew build
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4  # Using the latest version
+        with:
+          name: Artifacts
+          path: ./  # Ensure this path is correct
+
+      - name: Auto Release
+        uses: marvinpinto/action-automatic-releases@latest  # Using the latest stable version
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          automatic_release_tag: latest
+          prerelease: false
+          files: ./Custom-Crops/target

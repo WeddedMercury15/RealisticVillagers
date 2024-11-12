@@ -43,13 +43,12 @@ jobs:
           cd EcoEnchants
           chmod +x ./gradlew
           ./gradlew build
-          ls
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4  # Using the latest version
         with:
           name: Artifacts
-          path: ./  # Ensure this path is correct
+          path: ./build  # Ensure this path is correct
 
       - name: Auto Release
         uses: marvinpinto/action-automatic-releases@latest  # Using the latest stable version

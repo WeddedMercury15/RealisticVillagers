@@ -42,6 +42,7 @@ jobs:
         run: |
           cd EcoEnchants
           chmod +x ./gradlew
+          ls -R
           ./gradlew shadowJar
 
       - name: Upload Artifacts

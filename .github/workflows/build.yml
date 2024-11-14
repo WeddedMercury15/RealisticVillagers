@@ -20,8 +20,6 @@ jobs:
       - name: Clone Repository
         run: git clone --branch master https://github.com/aematsubara/RealisticVillagers.git
         
-      - name: Validate Gradle Wrapper
-        uses: gradle/wrapper-validation-action@v3
       
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2

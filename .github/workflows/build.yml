@@ -24,24 +24,26 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '21'
+          java-version: '17'
       
       - name: Configure Git User Details
       
         run: |
+          cp build.gradle.kts RealisticVillagers/
           cd RealisticVillagers
           git config --global user.email "actions@github.com" && git config --global user.name "Github Actions"
       
       - name: Build
         run: |
           cd RealisticVillagers
-          mvn package
+          chmod +x ./gradlew
+          ./gradlew build
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4  # Using the latest version
         with:
           name: RealisticVillagers Artifacts
-          path: ./RealisticVillagers/target  # Ensure this path is correct
+          path: ./RealisticVillagers/build/libs/*.jar  # Ensure this path is correct
 
       - name: Auto Release
         uses: marvinpinto/action-automatic-releases@latest  # Using the latest stable version
@@ -49,4 +51,4 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           automatic_release_tag: latest
           prerelease: false
-          files: ./RealisticVillagers/target
+          files: ./RealisticVillagers/build/libs/*.jar

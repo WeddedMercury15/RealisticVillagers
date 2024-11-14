@@ -19,9 +19,6 @@ jobs:
       
       - name: Clone Repository
         run: git clone --branch master https://github.com/aematsubara/RealisticVillagers.git
-        
-      - name: Setup Gradle
-        uses: gradle/gradle-build-action@v2
       
       - name: Set up JDK
         uses: actions/setup-java@v4
@@ -37,16 +34,14 @@ jobs:
       
       - name: Build
         run: |
-          cp build.gradle.kts RealisticVillagers/
-          cp settings.gradle.kts RealisticVillagers/
           cd RealisticVillagers
-          gradle build
+          mvn package
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4  # Using the latest version
         with:
           name: RealisticVillagers Artifacts
-          path: ./RealisticVillagers/build/libs/*.jar  # Ensure this path is correct
+          path: ./RealisticVillagers/target/*.jar  # Ensure this path is correct
 
       - name: Auto Release
         uses: marvinpinto/action-automatic-releases@latest  # Using the latest stable version
@@ -54,4 +49,4 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           automatic_release_tag: latest
           prerelease: false
-          files: ./RealisticVillagers/build/libs/*.jar
+          files: ./RealisticVillagers/target/*.jar
